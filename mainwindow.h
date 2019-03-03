@@ -8,6 +8,7 @@
 #include <QVBoxLayout>
 #include <QMdiSubWindow>
 #include <QSpacerItem>
+#include <QString>
 
 #include "serialreciver.h"
 
@@ -49,6 +50,12 @@ private:
     void deleteMenus();
 
     void creatSubWindows();
+
+    // func log
+    void log(QString str, int debugLevel=0);
+    void logWarning(QString str);
+    void logError(QString str);
+
 
 };
 

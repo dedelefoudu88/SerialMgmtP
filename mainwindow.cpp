@@ -14,6 +14,10 @@
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
 
+/**
+ * @brief MainWindow::MainWindow
+ * @param parent
+ */
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -25,17 +29,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
     zoneCentraleSubWin = new QMdiArea;
 
-    mainLayout = new QVBoxLayout(zoneCentrale);
+    mainLayout = new QVBoxLayout(zoneCentrale);                                 // area where the serial windows will be put
 
-    debugText = new QPlainTextEdit();
-    debugText->setPlainText("test");
+    debugText = new QPlainTextEdit();                                           // area for log & debug
+    // debugText->setPlainText("test");
     debugText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    //spacesubWindow = new QSpacerItem(10,200);//(int w, int h, QSizePolicy::Policy hPolicy = QSizePolicy::Minimum, QSizePolicy::Policy vPolicy = QSizePolicy::Minimum);
     mainLayout->addWidget(zoneCentraleSubWin);
     mainLayout->addWidget(debugText);
     createMenus();
 }
 
+/**
+ * @brief MainWindow::createMenus
+ */
 void MainWindow::createMenus()
 {
     menuSetting = menuBar()->addMenu("Setting");
@@ -46,32 +52,37 @@ void MainWindow::createMenus()
 
 }
 
+/**
+ * @brief MainWindow::openSerialConnect
+ *
+ * open popup window to set serial conection
+ */
 void MainWindow::openSerialConnect()
 {
     SerialConnectWindow serialConnectWindow(this);
     serialConnectWindow.setModal(true);
     if(serialConnectWindow.exec() == QDialog::Accepted)
     {
-        debugText->moveCursor(QTextCursor::End);
-        debugText->insertPlainText("Accepted "+ serialConnectWindow.serialSelect);
+        log("Accepted "+ serialConnectWindow.serialSelect,1);
         creatSubWindows();
     }
     else
     {
-        debugText->moveCursor(QTextCursor::End);
-        debugText->insertPlainText("reject");
+        logWarning("reject");
     }
 }
 
+/**
+ * @brief MainWindow::creatSubWindows
+ *
+ * creat serial window reciver
+ */
 void MainWindow::creatSubWindows()
 {
-    debugText->moveCursor(QTextCursor::End);
-    debugText->insertPlainText("creat sub win");
+    log("creat sub win",0);
     serialReciver = new SerialReciver;
-    //QTextEdit *zoneTexte1 = new QTextEdit;
+
     serialSubWindows = zoneCentraleSubWin->addSubWindow(serialReciver);
-    //zoneCentrale->setActiveSubWindow(serialSubWindows);
-    //zoneTexte1->setFrameStyle(Qt::FramelessWindowHint);
     serialReciver->show();
 }
 
@@ -87,9 +98,27 @@ void MainWindow::deleteMenus()
     delete zoneCentrale;
 }
 
+void MainWindow::log(QString str, int debugLevel)
+{
+    for(int tabLevel=0; tabLevel<debugLevel; tabLevel++)
+    {
+        str = "\t"+str+"\n";
+    }
+    debugText->insertPlainText(str);
+    debugText->moveCursor(QTextCursor::End);
+}
+
+void MainWindow::logWarning(QString str)
+{
+    log("<warning> " + str, 0);
+}
+
+void MainWindow::logError(QString str)
+{
+    log("!!! ERROR !!! < " + str + " > !!! ERROR !!!", 0);
+}
+
 MainWindow::~MainWindow()
 {
-
-
     delete ui;
 }

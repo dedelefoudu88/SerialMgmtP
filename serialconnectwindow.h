@@ -2,6 +2,9 @@
 #define SERIALCONNECTWINDOW_H
 
 #include <QDialog>
+#include <QStringListModel>
+
+#include "serialmgmt.h"
 
 namespace Ui {
 class SerialConnectWindow;
@@ -17,8 +20,14 @@ public:
     QString serialSelect;
 
 public slots:
+
+private slots:
+    void returnConection(QModelIndex modelIdx);
     //on_exit();
 private:
+    QStringListModel *serialListModel;
+    SerialMgmt *serialMgmt;
+    QStringList serialList;
     Ui::SerialConnectWindow *ui;
 };
 
